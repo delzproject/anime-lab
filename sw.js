@@ -1,4 +1,4 @@
-const CACHE = "neon-lab-v6";
+const CACHE = "neon-lab-v7";
 const FILES = ["./","./index.html","./manifest.json","./animasi2.mp4","./icon4.jpg"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(FILES)).then(() => self.skipWaiting()));
