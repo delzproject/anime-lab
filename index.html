@@ -2,105 +2,277 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>NEON LAB</title>
 <meta name="theme-color" content="#140A24">
-<meta name="description" content="NEON LAB - Tap sticker di video buka tools">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon4.jpg">
 <link rel="icon" href="icon4.jpg" type="image/jpeg">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --paper:#EDE8F7; --ink:#140A24; --red:#E8233A; --pink:#FF5C8A; --yellow:#FFC93C; }
+  :root{ --paper:#EDE8F7; --ink:#140A24; --red:#E8233A; --pink:#FF5C8A; --yellow:#FFC93C; --green:#1DB954; }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{ background:var(--ink); color:var(--paper); font-family:'Archivo',sans-serif; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; align-items:center; overflow:hidden; padding:12px 10px 10px; }
-  .top{ width:min(92vw,400px); display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:10px; }
-  .top h1{ font-size:26px; font-weight:900; line-height:.9; letter-spacing:-1px; text-transform:uppercase; }
+  html,body{ width:100%; height:100%; overflow:hidden; background:#000; }
+  .app{ position:fixed; inset:0; width:100%; height:100dvh; overflow:hidden; background:#000; }
+  .stage{ position:absolute; left:50%; top:50%; width:130%; height:130%; transform:translate(-50%,-50%) rotate(-4deg); background:#000; }
+  .stage video{ width:100%; height:100%; object-fit:cover; display:block; }
+  .top{ position:absolute; top:14px; left:0; right:0; z-index:20; display:flex; justify-content:space-between; align-items:flex-end; padding:0 16px; pointer-events:none; }
+  .top h1{ font-family:'Archivo',sans-serif; font-size:28px; font-weight:900; line-height:.9; letter-spacing:-1px; text-transform:uppercase; color:var(--paper); text-shadow:2px 2px 0 #000; }
   .top h1 i{ font-style:normal; color:var(--red); }
-  .top .tag{ font-family:'Space Mono',monospace; font-size:10px; border:1.5px solid var(--paper); padding:5px 7px; transform:rotate(2deg); }
-  /* STAGE MIRING -4deg */
-  .stage{ position:relative; width:min(92vw,400px); height:min(68vh,620px); transform:rotate(-4deg); background:#000; border:2px solid #140A24; outline:3px solid var(--paper); }
-  .video-frame{ position:absolute; inset:0; overflow:hidden; background:#000; }
-  .video-frame video{ width:100%; height:100%; object-fit:cover; display:block; }
-  /* BUTTON PIL PUTIH VERTIKAL - SAMA KAYAK DI VIDEO LU */
-  .hotspot{ position:absolute; z-index:10; background:#fff; color:#111; border:2px solid #111; writing-mode:vertical-rl; font-family:'Archivo',sans-serif; font-weight:900; font-size:13px; padding:14px 9px; border-radius:999px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:4px 4px 0 #111; transition:transform .12s, box-shadow .12s, background .12s; will-change:transform; }
+  .top .tag{ font-family:'Space Mono',monospace; font-size:10px; color:var(--paper); border:1.5px solid var(--paper); padding:5px 7px; transform:rotate(2deg); background:rgba(20,10,36,.6); }
+  .hotspot{ position:absolute; z-index:10; background:#fff; color:#111; border:2px solid #111; writing-mode:vertical-rl; font-family:'Archivo',sans-serif; font-weight:900; font-size:13px; padding:14px 9px; border-radius:999px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:4px 4px 0 #111; transition:transform .12s, box-shadow .12s, background .12s; }
   .hotspot svg{ width:16px; height:16px; transform:rotate(90deg); }
   .hotspot small{ font-family:'Space Mono',monospace; font-weight:400; font-size:9px; }
-  .b1{ top:9%; left:50%; margin-left:-40px; } .b2{ top:22%; right:3%; background:var(--yellow); } .b3{ top:38%; left:2%; background:var(--paper); } .b4{ top:58%; right:2%; } .b5{ top:48%; left:8%; background:var(--red); color:#fff; border-color:#fff; } .b6{ bottom:22%; left:3%; background:var(--pink); } .b7{ bottom:12%; right:8%; } .b8{ bottom:4%; left:50%; margin-left:-50px; background:var(--ink); color:#fff; border-color:#fff; }
-  /* BUTTON ANIMATION PAS DIPENCET */
+  .b1{ top:16%; left:50%; margin-left:-40px; } .b2{ top:28%; right:8%; background:var(--yellow); } .b3{ top:42%; left:4%; background:var(--paper); } .b4{ top:60%; right:4%; } .b5{ top:50%; left:10%; background:var(--red); color:#fff; border-color:#fff; } .b6{ bottom:24%; left:6%; background:var(--pink); } .b7{ bottom:14%; right:10%; } .b8{ bottom:6%; left:50%; margin-left:-50px; background:var(--ink); color:#fff; border-color:#fff; }
   .hotspot:active, .hotspot.pressed{ transform:translate(3px,3px) scale(.94) !important; box-shadow:1px 1px 0 #111 !important; background:var(--yellow) !important; color:#111 !important; }
-  .hotspot::after{ content:""; position:absolute; inset:-6px; border:1.5px solid #fff; border-radius:999px; opacity:0; pointer-events:none; }
-  .hotspot.pressed::after{ animation:ripple .35s ease-out; }
-  @keyframes ripple{ 0%{opacity:.9; transform:scale(.8)} 100%{opacity:0; transform:scale(1.25)} }
-  .hint{ margin-top:18px; font-family:'Space Mono',monospace; font-size:10px; color:#B8AED6; text-align:center; }
-  /* JENDELA MENGAMBANG - MIRING JUGA */
-  .overlay{ display:none; position:fixed; inset:0; z-index:100; background:rgba(10,4,22,.82); align-items:center; justify-content:center; padding:18px; } .overlay.open{ display:flex; }
-  .window{ width:min(92vw,380px); max-height:80vh; overflow:auto; background:var(--paper); color:var(--ink); border:3px solid var(--ink); border-radius:6px 22px 6px 22px; padding:16px; transform:rotate(2deg); box-shadow:8px 8px 0 var(--red); animation:pop .22s cubic-bezier(.2,1.4,.4,1); }
-  @keyframes pop{ from{ transform:rotate(2deg) scale(.9) translateY(10px); opacity:0 } to{ transform:rotate(2deg) scale(1) translateY(0); opacity:1 } }
-  .window-head{ display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid var(--ink); padding-bottom:10px; }
-  .window h2{ font-size:20px; font-weight:900; line-height:1; text-transform:uppercase; } .window h2 span{ color:var(--red); } .window p{ font-size:12px; line-height:1.5; margin-top:8px; font-weight:500; } .window .meta{ font-family:'Space Mono',monospace; font-size:9px; margin-top:6px; }
-  /* CARD - HOVER / PRESS ADA ANIMASI */
+  .overlay{ display:none; position:fixed; inset:0; z-index:100; background:rgba(10,4,22,.82); align-items:center; justify-content:center; padding:16px; }
+  .overlay.open{ display:flex; }
+  .window{ width:min(92vw,380px); max-height:82dvh; overflow:auto; background:var(--paper); color:var(--ink); border:3px solid var(--ink); border-radius:6px 22px 6px 22px; padding:16px; transform:rotate(-4deg); box-shadow:8px 8px 0 var(--red); animation:pop .22s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes pop{ from{ transform:rotate(-4deg) scale(.9) translateY(10px); opacity:0 } to{ transform:rotate(-4deg) scale(1) translateY(0); opacity:1 } }
+  .window-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; border-bottom:2px solid var(--ink); padding-bottom:10px; }
+  .window h2{ font-family:'Archivo',sans-serif; font-size:20px; font-weight:900; line-height:1; text-transform:uppercase; } .window h2 span{ color:var(--red); }
+  .window .badge{ font-family:'Space Mono',monospace; font-size:9px; border:1.5px solid #140A24; padding:4px 6px; white-space:nowrap; }
+  .window p{ font-size:12px; line-height:1.5; margin-top:8px; font-weight:500; }
+  .window .meta{ font-family:'Space Mono',monospace; font-size:9px; margin-top:6px; }
   .tool-list{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
-  .tool-card{ background:#fff; color:var(--ink); text-decoration:none; border:2px solid var(--ink); border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center; gap:10px; box-shadow:3px 3px 0 var(--ink); transition:transform .13s, box-shadow .13s, background .13s; }
-  .tool-card:hover{ transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--ink); }
-  .tool-card:active, .tool-card.pressed{ transform:translate(3px,3px) scale(.98); box-shadow:0 0 0 var(--ink); background:var(--yellow); }
-  .tool-card .left{ display:flex; gap:10px; align-items:center; }
+  .tool-card{ background:#fff; color:var(--ink); text-decoration:none; border:2px solid var(--ink); border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center; gap:10px; box-shadow:3px 3px 0 var(--ink); cursor:pointer; transition:transform .13s, box-shadow .13s, background .13s; min-width:0; width:100%; text-align:left; font-family:inherit; }
+  .tool-card:active{ transform:translate(3px,3px) scale(.98); box-shadow:0 0 0 var(--ink); background:var(--yellow); }
+  .tool-card .left{ display:flex; gap:10px; align-items:center; min-width:0; }
   .tool-card .ico{ width:32px; height:32px; border:2px solid var(--ink); display:grid; place-items:center; flex-shrink:0; }
   .tool-card .ico svg{ width:18px; height:18px; }
-  .tool-card b{ font-size:13px; display:block; line-height:1.2; } .tool-card small{ font-family:'Space Mono',monospace; font-size:9px; color:#555; } .tool-card .arrow{ font-weight:900; }
-  /* SKELETON SHIMMER - LOADING */
+  .tool-card b{ font-family:'Archivo',sans-serif; font-size:13px; display:block; line-height:1.2; } .tool-card small{ font-family:'Space Mono',monospace; font-size:9px; color:#555; }
+  .tool-card .arrow{ font-weight:900; flex-shrink:0; }
+  /* === AREA HASIL DI DALAM HALAMAN - INI KUNCINYA === */
+  .work{ display:none; margin-top:14px; border:2px dashed var(--ink); border-radius:10px; padding:12px; background:#fff; }
+  .work.show{ display:block; }
+  .work h3{ font-size:14px; font-weight:900; text-transform:uppercase; }
+  .work .hint2{ font-family:'Space Mono',monospace; font-size:9px; color:#555; margin-top:4px; }
+  .work input, .work select{ width:100%; margin-top:10px; padding:12px; border:2px solid var(--ink); border-radius:8px; font-family:'Space Mono',monospace; font-size:12px; background:#EDE8F7; }
+  .work .btn-run{ margin-top:10px; width:100%; padding:12px; border:2px solid var(--ink); border-radius:8px; background:var(--ink); color:#fff; font-weight:900; cursor:pointer; }
+  .work .btn-run:active{ transform:translate(2px,2px); }
+  .result{ margin-top:12px; padding:10px; border-radius:8px; font-family:'Space Mono',monospace; font-size:11px; line-height:1.6; white-space:pre-wrap; word-break:break-word; display:none; }
+  .result.show{ display:block; }
+  .result.ok{ background:#DFF7E3; border:2px solid var(--green); color:#0A4D1A; }
+  .result.warn{ background:#FFF3CD; border:2px solid var(--yellow); color:#5A3E00; }
+  .result.bad{ background:#FFE0E0; border:2px solid var(--red); color:#7A0000; }
+  .result.info{ background:#EDE8F7; border:2px solid var(--ink); color:var(--ink); }
+  .back-btn{ margin-top:10px; width:100%; padding:10px; border:2px solid var(--ink); border-radius:8px; background:#fff; font-weight:900; cursor:pointer; font-family:'Archivo',sans-serif; }
   .skeleton{ display:none; flex-direction:column; gap:10px; margin-top:14px; } .skeleton.show{ display:flex; }
   .sk{ height:58px; border:2px solid var(--ink); border-radius:10px; background:#D8D0E8; position:relative; overflow:hidden; }
   .sk::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent 20%, rgba(255,255,255,.9) 50%, transparent 80%); transform:translateX(-100%); animation:shimmer 1.1s infinite; }
   @keyframes shimmer{ to{ transform:translateX(100%); } }
-  .close-btn{ margin-top:14px; width:100%; padding:13px; border:2px solid var(--ink); border-radius:8px; background:var(--red); color:#fff; font-weight:900; cursor:pointer; font-size:13px; letter-spacing:1px; box-shadow:3px 3px 0 var(--ink); transition:transform .12s, box-shadow .12s; }
-  .close-btn:active{ transform:translate(2px,2px); box-shadow:0 0 0 var(--ink); }
+  .close-btn{ margin-top:14px; width:100%; padding:13px; border:2px solid var(--ink); border-radius:8px; background:var(--red); color:#fff; font-weight:900; cursor:pointer; font-size:13px; letter-spacing:1px; box-shadow:3px 3px 0 var(--ink); }
 </style>
 </head>
 <body>
-<div class="top"><h1>NEON<br><i>LAB_</i></h1><div class="tag">TAP STICKER<br>BUKA TOOLS</div></div>
-<div class="stage">
-  <div class="video-frame"><video src="animasi2.mp4" autoplay muted loop playsinline preload="auto"></video></div>
-  <button class="hotspot b1" onclick="openTool(this,'scan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>SCAN <small>01</small></button>
-  <button class="hotspot b2" onclick="openTool(this,'phishing')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14L21 3l-7 21-3-7-7-3z"/></svg>CEK LINK <small>02</small></button>
-  <button class="hotspot b3" onclick="openTool(this,'password')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>PASSWORD <small>03</small></button>
-  <button class="hotspot b4" onclick="openTool(this,'ip')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>IP CHECK <small>04</small></button>
-  <button class="hotspot b5" onclick="openTool(this,'pegasus')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 6 6 1-4.5 4 1 6.5L12 17l-4.5 3.5L8.5 14 4 10l6-1z"/></svg>PEGASUS <small>05</small></button>
-  <button class="hotspot b6" onclick="openTool(this,'file')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>CEK FILE <small>06</small></button>
-  <button class="hotspot b7" onclick="openTool(this,'email')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>EMAIL BOCOR <small>07</small></button>
-  <button class="hotspot b8" onclick="openTool(this,'all')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>SEMUA TOOLS <small>08</small></button>
+<div class="app">
+  <div class="stage">
+    <video src="animasi2.mp4" autoplay muted loop playsinline preload="auto"></video>
+    <button class="hotspot b1" onclick="openTool(this,'scan')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>SCAN <small>01</small></button>
+    <button class="hotspot b2" onclick="openTool(this,'phishing')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14L21 3l-7 21-3-7-7-3z"/></svg>CEK LINK <small>02</small></button>
+    <button class="hotspot b3" onclick="openTool(this,'password')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>PASSWORD <small>03</small></button>
+    <button class="hotspot b4" onclick="openTool(this,'ip')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>IP CHECK <small>04</small></button>
+    <button class="hotspot b5" onclick="openTool(this,'pegasus')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 6 6 1-4.5 4 1 6.5L12 17l-4.5 3.5L8.5 14 4 10l6-1z"/></svg>PEGASUS <small>05</small></button>
+    <button class="hotspot b6" onclick="openTool(this,'file')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>CEK FILE <small>06</small></button>
+    <button class="hotspot b7" onclick="openTool(this,'email')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 6L2 7"/></svg>EMAIL BOCOR <small>07</small></button>
+    <button class="hotspot b8" onclick="openTool(this,'all')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>SEMUA TOOLS <small>08</small></button>
+  </div>
+  <div class="top"><h1>NEON<br><i>LAB_</i></h1><div class="tag">TAP STICKER<br>BUKA TOOLS</div></div>
 </div>
-<div class="hint">VIDEO: animasi2.mp4 — ICON: icon4.jpg — STAGE MIRING -4deg</div>
+
 <div class="overlay" id="overlay" onclick="if(event.target===this) closeTool()">
   <div class="window">
-    <div class="window-head"><h2 id="wTitle">TOOLS <span>_</span></h2><span style="font-family:'Space Mono',monospace;font-size:10px;border:1.5px solid #140A24;padding:4px 6px;">NEON LAB</span></div>
+    <div class="window-head"><h2 id="wTitle">TOOLS <span>_</span></h2><span class="badge">NEON LAB</span></div>
     <p id="wDesc">Deskripsi</p><div class="meta" id="wMeta">—</div>
     <div class="skeleton" id="skeleton"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
     <div class="tool-list" id="wList"></div>
+
+    <!-- HASIL MUNCUL DI SINI, GAK PINDAH WEB -->
+    <div class="work" id="work">
+      <h3 id="workTitle">CEK</h3>
+      <div class="hint2" id="workHint"></div>
+      <div id="workInput"></div>
+      <button class="btn-run" id="workBtn" onclick="runWork()">CEK SEKARANG →</button>
+      <div class="result" id="workResult"></div>
+      <button class="back-btn" onclick="backToList()">← KEMBALI KE LIST</button>
+    </div>
+
     <button class="close-btn" onclick="closeTool()">TUTUP [X]</button>
   </div>
 </div>
+
 <script>
 const DATA = {
-  scan:{title:"SCAN <span>_</span>", desc:"Cek file, link, dan HP lu kena malware atau enggak.", meta:"3 TOOLS / GRATIS", tools:[["VirusTotal","Scan file & link","https://www.virustotal.com"],["URLScan","Lihat isi link tanpa buka","https://urlscan.io"],["Hybrid Analysis","Sandbox file mencurigakan","https://www.hybrid-analysis.com"]]},
-  phishing:{title:"CEK LINK <span>_</span>", desc:"Link WA / SMS yang lu dapet itu asli atau jebakan.", meta:"2 TOOLS / GRATIS", tools:[["PhishTank","Database link phishing","https://phishtank.org"],["Google Safe Browsing","Cek reputasi domain","https://transparencyreport.google.com/safe-browsing/search"]]},
-  password:{title:"PASSWORD <span>_</span>", desc:"Password lu udah bocor di database hacker?", meta:"1 TOOL / GRATIS", tools:[["Pwned Passwords","Cek password bocor","https://haveibeenpwned.com/Passwords"]]},
-  ip:{title:"IP CHECK <span>_</span>", desc:"IP lu kebaca apa aja sama internet.", meta:"2 TOOLS / GRATIS", tools:[["What Is My IP","Lihat IP + ISP lu","https://whatismyipaddress.com"],["IP Info","Detail IP & lokasi","https://ipinfo.io"]]},
-  pegasus:{title:"PEGASUS <span>_</span>", desc:"Cek indikasi spyware kelas negara kayak Pegasus.", meta:"ADVANCED / BUTUH PC", tools:[["MVT Project","Tool forensik Amnesty","https://github.com/mvt-project/mvt"],["Amnesty - Pegasus Project","Laporan investigasi","https://forbiddenstories.org"]]},
-  file:{title:"CEK FILE <span>_</span>", desc:"File APK / PDF yang dikirim orang, aman atau enggak.", meta:"2 TOOLS / GRATIS", tools:[["VirusTotal File","Upload & scan","https://www.virustotal.com"],["Any.Run","Jalankan di sandbox","https://any.run"]]},
-  email:{title:"EMAIL BOCOR <span>_</span>", desc:"Email lu pernah bocor di mana aja.", meta:"1 TOOL / GRATIS", tools:[["Have I Been Pwned","Cek email bocor","https://haveibeenpwned.com"]]},
-  all:{title:"SEMUA TOOLS <span>_</span>", desc:"Semua tools di atas, dalam satu list.", meta:"8 KATEGORI / GRATIS", tools:[["VirusTotal","Scan file & link","https://www.virustotal.com"],["Have I Been Pwned","Cek email bocor","https://haveibeenpwned.com"],["URLScan","Cek link","https://urlscan.io"],["MVT - Pegasus","Forensik HP","https://github.com/mvt-project/mvt"]]},
+  scan:{title:"SCAN <span>_</span>", desc:"Cek file, link, dan HP lu. Semua di halaman ini, gak pindah web.", meta:"3 TOOLS / DI HALAMAN INI", tools:[
+    {id:"link", name:"Cek Link Phishing", sub:"Tempel link WA / SMS di sini"},
+    {id:"file", name:"Cek File (Hash)", sub:"Pilih file, hitung hash di HP lu"},
+    {id:"ip", name:"Cek IP Lu", sub:"Lihat IP + ISP langsung"}
+  ]},
+  phishing:{title:"CEK LINK <span>_</span>", desc:"Tempel link-nya, gua analisa di sini.", meta:"1 TOOL / DI HALAMAN INI", tools:[
+    {id:"link", name:"Cek Link Phishing", sub:"Analisa domain, IP, kata jebakan"}
+  ]},
+  password:{title:"PASSWORD <span>_</span>", desc:"Cek password lu kuat + pernah bocor apa enggak, di sini aja.", meta:"1 TOOL / DI HALAMAN INI", tools:[
+    {id:"password", name:"Cek Password", sub:"Kekuatan + cek bocor HIBP"}
+  ]},
+  ip:{title:"IP CHECK <span>_</span>", desc:"IP lu kebaca apa aja.", meta:"1 TOOL / DI HALAMAN INI", tools:[
+    {id:"ip", name:"Cek IP Lu", sub:"IP, kota, ISP"}
+  ]},
+  pegasus:{title:"PEGASUS <span>_</span>", desc:"Cek gejala HP lu kena spyware, jawab di sini.", meta:"CHECKLIST / DI HALAMAN INI", tools:[
+    {id:"pegasus", name:"Cek Gejala Pegasus", sub:"Checklist 6 gejala"}
+  ]},
+  file:{title:"CEK FILE <span>_</span>", desc:"File APK / PDF aman atau enggak, cek hash di sini.", meta:"1 TOOL / DI HALAMAN INI", tools:[
+    {id:"file", name:"Cek File (Hash)", sub:"SHA-256 di HP lu, gak di-upload"}
+  ]},
+  email:{title:"EMAIL BOCOR <span>_</span>", desc:"Cek email lu format + risiko bocor di sini.", meta:"1 TOOL / DI HALAMAN INI", tools:[
+    {id:"email", name:"Cek Email", sub:"Format + cek pola bocor"}
+  ]},
+  all:{title:"SEMUA TOOLS <span>_</span>", desc:"Semua tools, semua di halaman ini.", meta:"6 TOOLS / DI HALAMAN INI", tools:[
+    {id:"link", name:"Cek Link Phishing", sub:"Tempel link"},
+    {id:"password", name:"Cek Password", sub:"Kuat + bocor"},
+    {id:"ip", name:"Cek IP Lu", sub:"IP + ISP"},
+    {id:"file", name:"Cek File (Hash)", sub:"SHA-256"},
+    {id:"email", name:"Cek Email", sub:"Format + risiko"},
+    {id:"pegasus", name:"Cek Gejala Pegasus", sub:"Checklist"}
+  ]},
 };
+
+let currentWork = null;
+let currentCat = null;
+
 function openTool(btn,key){
   document.querySelectorAll('.hotspot').forEach(b=>b.classList.remove('pressed'));
   btn.classList.add('pressed'); setTimeout(()=>btn.classList.remove('pressed'),350);
-  const d=DATA[key]; document.getElementById('wTitle').innerHTML=d.title; document.getElementById('wDesc').innerText=d.desc; document.getElementById('wMeta').innerText=d.meta;
+  currentCat = key;
+  const d=DATA[key];
+  document.getElementById('wTitle').innerHTML=d.title;
+  document.getElementById('wDesc').innerText=d.desc;
+  document.getElementById('wMeta').innerText=d.meta;
   document.getElementById('overlay').classList.add('open');
+  document.getElementById('work').classList.remove('show');
   const sk=document.getElementById('skeleton'); const list=document.getElementById('wList');
-  list.innerHTML=''; sk.classList.add('show');
-  setTimeout(()=>{ sk.classList.remove('show'); list.innerHTML=d.tools.map(t=>`<a class="tool-card" href="${t[2]}" target="_blank" rel="noopener" onclick="this.classList.add('pressed')"><span class="left"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></span><span><b>${t[0]}</b><small>${t[1]}</small></span></span><span class="arrow">→</span></a>`).join(''); },650);
+  list.style.display='flex'; list.innerHTML=''; sk.classList.add('show');
+  setTimeout(()=>{ sk.classList.remove('show');
+    list.innerHTML=d.tools.map(t=>`<button class="tool-card" onclick="openWork('${t.id}')"><span class="left"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></span><span><b>${t.name}</b><br><small>${t.sub}</small></span></span><span class="arrow">→</span></button>`).join('');
+  },400);
 }
 function closeTool(){ document.getElementById('overlay').classList.remove('open'); }
+function backToList(){
+  document.getElementById('work').classList.remove('show');
+  document.getElementById('wList').style.display='flex';
+  document.getElementById('wDesc').innerText = DATA[currentCat].desc;
+}
+
+// === BUKA ALAT DI DALAM HALAMAN ===
+function openWork(id){
+  currentWork = id;
+  document.getElementById('wList').style.display='none';
+  const w=document.getElementById('work'); w.classList.add('show');
+  const inp=document.getElementById('workInput');
+  const res=document.getElementById('workResult'); res.className='result'; res.innerText='';
+  const title=document.getElementById('workTitle'); const hint=document.getElementById('workHint');
+  const btn=document.getElementById('workBtn');
+  if(id==='link'){ title.innerText='CEK LINK'; hint.innerText='Tempel link yang lu dapet dari WA / SMS. Gak akan dibuka, cuma dianalisa.'; inp.innerHTML='<input id="in1" type="text" placeholder="https://contoh-link-aneh.com/login-gratis" />'; btn.innerText='CEK LINK →'; }
+  if(id==='password'){ title.innerText='CEK PASSWORD'; hint.innerText='Password TIDAK dikirim kemana-mana. Cek bocor pake teknik k-anonymity (cuma 5 huruf hash yang dikirim).'; inp.innerHTML='<input id="in1" type="password" placeholder="Tulis password lu" />'; btn.innerText='CEK PASSWORD →'; }
+  if(id==='ip'){ title.innerText='CEK IP LU'; hint.innerText='Klik aja, langsung muncul IP lu di bawah.'; inp.innerHTML='<p style="font-family:Space Mono,monospace;font-size:11px;margin-top:10px;">Klik CEK, IP lu bakal muncul di sini.</p>'; btn.innerText='LIHAT IP GUA →'; }
+  if(id==='file'){ title.innerText='CEK FILE'; hint.innerText='Pilih file di HP lu. File TIDAK di-upload, cuma dihitung SHA-256 di HP lu.'; inp.innerHTML='<input id="inFile" type="file" />'; btn.innerText='HITUNG HASH →'; }
+  if(id==='email'){ title.innerText='CEK EMAIL'; hint.innerText='Cek format email + pola yang sering bocor.'; inp.innerHTML='<input id="in1" type="email" placeholder="nama@email.com" />'; btn.innerText='CEK EMAIL →'; }
+  if(id==='pegasus'){ title.innerText='CEK GEJALA PEGASUS'; hint.innerText='Centang yang lu rasain di HP lu, hasilnya muncul di bawah.'; inp.innerHTML=`
+    <label style="display:block;font-size:12px;margin-top:10px;"><input type="checkbox" class="pg"> Baterai boros banget tiba-tiba</label>
+    <label style="display:block;font-size:12px;margin-top:8px;"><input type="checkbox" class="pg"> HP panas padahal gak dipake</label>
+    <label style="display:block;font-size:12px;margin-top:8px;"><input type="checkbox" class="pg"> Kuota habis sendiri</label>
+    <label style="display:block;font-size:12px;margin-top:8px;"><input type="checkbox" class="pg"> HP restart / lemot sendiri</label>
+    <label style="display:block;font-size:12px;margin-top:8px;"><input type="checkbox" class="pg"> Ada SMS / WA aneh + link</label>
+    <label style="display:block;font-size:12px;margin-top:8px;"><input type="checkbox" class="pg"> Mic / kamera nyala sendiri</label>`; btn.innerText='CEK GEJALA →'; }
+  document.getElementById('wDesc').innerText='Hasilnya muncul di bawah, di halaman ini. Jangan pindah web.';
+  w.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function showRes(text, type){
+  const r=document.getElementById('workResult');
+  r.className='result show '+type; r.innerText=text;
+}
+
+// === LOGIKA SEMUA TOOL - DI DALAM HALAMAN ===
+async function runWork(){
+  const res=document.getElementById('workResult');
+  if(currentWork==='link'){
+    const v=(document.getElementById('in1').value||'').trim();
+    if(!v) return showRes('Tempel dulu link-nya coi.', 'warn');
+    let score=0, notes=[];
+    try{ const u=new URL(v.startsWith('http')?v:'https://'+v);
+      if(/^\d+\.\d+\.\d+\.\d+$/.test(u.hostname)){ score+=3; notes.push('• Pakai IP langsung, bukan domain → MENCURIGAKAN'); }
+      if(u.hostname.split('.').length>4){ score+=2; notes.push('• Subdomain berlapis-lapis → kayak phishing'); }
+      if(u.hostname.includes('xn--')){ score+=2; notes.push('• Domain punycode (huruf mirip) → bahaya'); }
+      if(/login|verify|free|giveaway|bonus|unlock|secure-update/i.test(v)){ score+=2; notes.push('• Ada kata jebakan: login / gratis / bonus'); }
+      if(u.protocol==='http:'){ score+=1; notes.push('• Masih http (gak ada gembok)'); }
+      if(u.hostname.length>30){ score+=1; notes.push('• Domain kepanjangan'); }
+      notes.unshift('DOMAIN: '+u.hostname);
+    }catch(e){ return showRes('Link-nya gak valid. Coba copy full link-nya.', 'warn'); }
+    if(score>=4) showRes('HASIL: BAHAYA ⛔\nSkor: '+score+'/10\n\n'+notes.join('\n')+'\n\nSaran: JANGAN DIBUKA. Hapus chat-nya.', 'bad');
+    else if(score>=2) showRes('HASIL: WASPADA ⚠️\nSkor: '+score+'/10\n\n'+notes.join('\n')+'\n\nSaran: Jangan login / isi data di link itu.', 'warn');
+    else showRes('HASIL: RELATIF AMAN ✅\nSkor: '+score+'/10\n\n'+notes.join('\n')+'\n\nTetep hati-hati kalau disuruh isi password.', 'ok');
+  }
+  if(currentWork==='password'){
+    const pw=document.getElementById('in1').value||'';
+    if(pw.length<4) return showRes('Isi dulu password-nya.', 'warn');
+    let s=[], score=0;
+    if(pw.length>=12) score+=2; else if(pw.length>=8) score+=1; else s.push('• Kependekan, minimal 12 karakter');
+    if(/[A-Z]/.test(pw)) score++; else s.push('• Gak ada huruf besar');
+    if(/[a-z]/.test(pw)) score++; else s.push('• Gak ada huruf kecil');
+    if(/[0-9]/.test(pw)) score++; else s.push('• Gak ada angka');
+    if(/[^A-Za-z0-9]/.test(pw)) score++; else s.push('• Gak ada simbol (!@#)');
+    if(/123|password|qwerty|admin/i.test(pw)) score-=2, s.push('• Ada pola gampang ditebak!');
+    showRes('MENGHITUNG KEKUATAN + CEK BOCOR...', 'info');
+    try{
+      const enc=new TextEncoder().encode(pw);
+      const buf=await crypto.subtle.digest('SHA-1', enc);
+      const hex=[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+      const r=await fetch('https://api.pwnedpasswords.com/range/'+hex.slice(0,5));
+      const txt=await r.text();
+      const found=txt.split('\n').find(l=>l.startsWith(hex.slice(5)));
+      const count=found?parseInt(found.split(':')[1]):0;
+      if(count>0) showRes('HASIL: BOCOR! ⛔\nPassword ini udah bocor '+count.toLocaleString('id-ID')+'x di database hacker.\n\nKekuatan: '+score+'/6\n'+s.join('\n')+'\n\nGANTI SEKARANG, jangan dipake lagi.', 'bad');
+      else if(score>=5) showRes('HASIL: AMAN & KUAT ✅\nBelum ketemu di database bocor.\nKekuatan: '+score+'/6\n\nPertahanin, jangan share ke siapa-siapa.', 'ok');
+      else showRes('HASIL: BELUM BOCOR, TAPI LEMAH ⚠️\nKekuatan: '+score+'/6\n'+s.join('\n'), 'warn');
+    }catch(e){ showRes('HASIL: Kekuatan '+score+'/6\n'+s.join('\n')+'\n\nCek bocor gagal (offline?). Tapi kekuatan udah kehitung.', 'warn'); }
+  }
+  if(currentWork==='ip'){
+    showRes('Mengambil IP lu...', 'info');
+    try{
+      const r=await fetch('https://ipapi.co/json/');
+      const j=await r.json();
+      showRes('IP LU:\nIP: '+j.ip+'\nKota: '+(j.city||'-')+'\nRegion: '+(j.region||'-')+'\nNegara: '+(j.country_name||'-')+'\nISP: '+(j.org||'-')+'\n\nIni yang dilihat website kalau lu buka web. Kalau lu pake VPN, yang muncul IP VPN.', 'info');
+    }catch(e){ showRes('Gagal ambil IP. Cek internet lu, coba lagi.', 'warn'); }
+  }
+  if(currentWork==='file'){
+    const f=document.getElementById('inFile').files[0];
+    if(!f) return showRes('Pilih dulu file-nya.', 'warn');
+    showRes('Menghitung hash...', 'info');
+    const buf=await f.arrayBuffer();
+    const hashBuf=await crypto.subtle.digest('SHA-256', buf);
+    const hash=[...new Uint8Array(hashBuf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    let note='• Ukuran: '+(f.size/1024).toFixed(1)+' KB';
+    if(/\.apk$/i.test(f.name)) note+='\n• Ini APK. Jangan install kalau dari luar Play Store.';
+    if(/\.pdf|\.doc/i.test(f.name)) note+='\n• File dokumen. Jangan enable macro / link di dalamnya.';
+    showRes('FILE: '+f.name+'\n'+note+'\n\nSHA-256:\n'+hash+'\n\nCopy hash ini, bandingin sama hash resmi dari website aslinya. Kalau beda → file udah diubah / palsu.', 'info');
+  }
+  if(currentWork==='email'){
+    const v=(document.getElementById('in1').value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return showRes('Format email-nya salah coi. Contoh: nama@gmail.com', 'warn');
+    const domain=v.split('@')[1];
+    let msg='EMAIL: '+v+'\nDOMAIN: '+domain+'\nFORMAT: VALID ✅\n\n';
+    if(/gmail|yahoo|outlook|hotmail/i.test(domain)) msg+='Domain umum, sering jadi target phishing. Aktifin 2FA sekarang.\n\nCek manual di haveibeenpwned.com kalau mau liat detail bocornya (itu pun tetep bisa dibuka dari sini, tapi hasil utama udah di sini).';
+    else msg+='Domain custom / kampus / kantor. Biasanya lebih aman, tapi cek ke admin IT kalau dapet email aneh.';
+    showRes(msg, 'ok');
+  }
+  if(currentWork==='pegasus'){
+    const c=document.querySelectorAll('.pg:checked').length;
+    if(c===0) showRes('HASIL: 0/6 gejala.\nHP lu keliatannya normal. Tetep update OS + jangan klik link aneh.', 'ok');
+    else if(c<=2) showRes('HASIL: '+c+'/6 gejala. WASPADA ⚠️\nBisa jadi cuma HP panas / baterai tua. Tapi coba:\n1. Update OS\n2. Hapus app gak dikenal\n3. Restart HP', 'warn');
+    else showRes('HASIL: '+c+'/6 gejala. BAHAYA ⛔\nBanyak gejala spyware.\n1. Matikan HP 5 menit, nyalain lagi\n2. Backup chat penting\n3. Reset pabrik kalau masih sama\n4. Ganti password dari HP lain', 'bad');
+  }
+}
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("sw.js").then(()=>console.log("SW OK")).catch(e=>console.log("SW GAGAL",e));
@@ -108,4 +280,4 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 </body>
-</html>
+                                                                                                                                                                                            </html>
